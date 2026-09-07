@@ -28,7 +28,7 @@ dependencies:
   # UI, Fonts & 3D Animations
   google_fonts: any
   flutter_animate: any
-  fl_chart: any
+  fl_chart: 0.69.2
   intl: any
 
 dev_dependencies:

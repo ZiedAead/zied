@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # يتيح تشغيل البناء يدوياً بنقرة زر من GitHub
+  workflow_dispatch:
 
 jobs:
   # ==========================================
@@ -25,6 +25,10 @@ jobs:
           flutter-version: '3.22.x'
           channel: 'stable'
           cache: true
+
+      - name: Generate Missing Native Xcode Project Files
+        run: |
+          flutter create . --org com.zied --project-name zied_debts --platforms ios
 
       - name: Install dependencies
         run: flutter pub get
@@ -69,6 +73,10 @@ jobs:
           flutter-version: '3.22.x'
           channel: 'stable'
           cache: true
+
+      - name: Generate Missing Native Android Project Files
+        run: |
+          flutter create . --org com.zied --project-name zied_debts --platforms android
 
       - name: Install dependencies
         run: flutter pub get

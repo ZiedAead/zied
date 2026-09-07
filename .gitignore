@@ -1,0 +1,19 @@
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.zip
+
+# Visual Studio Code / IDE
+.vscode/
+.idea/
+*.iml
+
+# Node.js
+node_modules/
+
+# OS generated
+.DS_Store
+Thumbs.db

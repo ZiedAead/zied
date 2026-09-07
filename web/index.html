@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>زيد اياد للديون</title>
+
+  <!-- PWA & iOS Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="زيد اياد للديون">
+  <meta name="theme-color" content="#0B0F19">
+  <link rel="apple-touch-icon" href="assets/icon/app_icon.png">
+  <link rel="icon" type="image/png" href="assets/icon/app_icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Google Font Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- شريط التطبيق العلوي -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <img src="assets/icon/app_icon.png" alt="شعار التطبيق" class="app-logo">
+        <div class="brand-text">
+          <h1>زيد اياد للديون</h1>
+          <span class="offline-badge">⚡ يعمل أوفلاين</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnReports" class="icon-btn" title="التقارير والإحصائيات">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </button>
+        <button id="btnSettings" class="icon-btn" title="الإعدادات">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="main-container">
+
+    <!-- بطاقة الملخص ثلاثية الأبعاد الفاخرة -->
+    <section class="hero-card-3d">
+      <div class="hero-top">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>ملخص الذمم والديون</span>
+        </div>
+        <button class="exchange-rate-pill" id="heroRatePill" title="انقر لتعديل سعر الصرف">
+          <span class="currency-symbol">$1 =</span>
+          <strong id="displayExchangeRate">1,530</strong>
+          <span class="currency-unit">د.ع</span>
+        </button>
+      </div>
+
+      <div class="hero-center">
+        <span class="equivalent-title">الإجمالي التقديري الصافي</span>
+        <h2 id="totalEquivalent" class="equivalent-amount">0 د.ع</h2>
+      </div>
+
+      <div class="hero-currencies-grid">
+        <!-- عمود الدينار العراقي -->
+        <div class="currency-col iqd-col">
+          <div class="currency-header">
+            <span class="currency-indicator iqd-indicator"></span>
+            <h4>الدينار العراقي (IQD)</h4>
+          </div>
+          <div class="currency-rows">
+            <div class="row-stat">
+              <span>لي:</span>
+              <strong id="statForMeIqd" class="stat-green">0 د.ع</strong>
+            </div>
+            <div class="row-stat">
+              <span>علي:</span>
+              <strong id="statOnMeIqd" class="stat-red">0 د.ع</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="currencies-divider"></div>
+
+        <!-- عمود الدولار الأمريكي -->
+        <div class="currency-col usd-col">
+          <div class="currency-header">
+            <span class="currency-indicator usd-indicator"></span>
+            <h4>الدولار الأمريكي (USD)</h4>
+          </div>
+          <div class="currency-rows">
+            <div class="row-stat">
+              <span>لي:</span>
+              <strong id="statForMeUsd" class="stat-green">$0</strong>
+            </div>
+            <div class="row-stat">
+              <span>علي:</span>
+              <strong id="statOnMeUsd" class="stat-red">$0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- شريط البحث السريع -->
+    <section class="search-section">
+      <div class="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="بحث باسم الشخص أو رقم الهاتف..." autocomplete="off">
+        <button id="clearSearch" class="clear-btn" style="display: none;">&times;</button>
+      </div>
+    </section>
+
+    <!-- أزرار الفلترة السريعة -->
+    <section class="filters-scroll">
+      <div class="filter-chips">
+        <button class="chip active" data-filter="ALL">الكل (<span id="countAll">0</span>)</button>
+        <button class="chip chip-green" data-filter="FOR_ME">مطلوب منهم (لي)</button>
+        <button class="chip chip-red" data-filter="ON_ME">مطلوب مني (علي)</button>
+        <button class="chip chip-blue" data-filter="SETTLED">خالص الذمة</button>
+      </div>
+    </section>
+
+    <!-- رأس القائمة -->
+    <div class="list-header">
+      <h3>قائمة الحسابات والأشخاص</h3>
+      <span id="filteredCountLabel">0 شخص</span>
+    </div>
+
+    <!-- قائمة الأشخاص (تتحدث ديناميكياً) -->
+    <section id="personsList" class="persons-list"></section>
+
+  </main>
+
+  <!-- الزر العائم لإضافة شخص -->
+  <button id="btnFloatingAddPerson" class="fab-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    <span>إضافة شخص جديد</span>
+  </button>
+
+  <!-- تنبيه تثبيت الآيفون (iOS Install Prompt) -->
+  <div id="iosInstallBanner" class="ios-prompt-banner" style="display: none;">
+    <div class="prompt-icon">📲</div>
+    <div class="prompt-text">
+      <strong>تثبيت التطبيق على شاشة الآيفون:</strong>
+      <p>اضغط زر المشاركة <span class="share-icon-inline">⎋</span> في متصفح Safari بالأسفل، ثم اختر <strong>"إضافة إلى الشاشة الرئيسية" ➕</strong> ليظهر كأي تطبيق رسمي!</p>
+    </div>
+    <button id="dismissIosBanner" class="prompt-close">&times;</button>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: إضافة / تعديل شخص -->
+  <!-- ============================================================== -->
+  <div id="modalPerson" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h3 id="modalPersonTitle">إضافة شخص جديد</h3>
+        <button class="modal-close" data-close="modalPerson">&times;</button>
+      </div>
+      <form id="formPerson">
+        <input type="hidden" id="personEditId">
+        <div class="form-group">
+          <label for="personNameInput">اسم الشخص *</label>
+          <input type="text" id="personNameInput" placeholder="أدخل اسم الشخص..." required>
+        </div>
+        <div class="form-group">
+          <label for="personPhoneInput">رقم الهاتف (اختياري)</label>
+          <input type="tel" id="personPhoneInput" placeholder="مثال: 07701234567">
+        </div>
+        <div class="form-group">
+          <label for="personNotesInput">ملاحظات إضافية</label>
+          <textarea id="personNotesInput" rows="2" placeholder="أي تفاصيل عن الشخص..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" data-close="modalPerson">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ الشخص</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: تفاصيل الشخص وسجل الحركات -->
+  <!-- ============================================================== -->
+  <div id="modalPersonDetails" class="modal-overlay">
+    <div class="modal-card modal-large">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="person-details-title">
+          <h3 id="detailsPersonName">اسم الشخص</h3>
+          <span id="detailsPersonPhone" class="phone-link"></span>
+        </div>
+        <div class="details-top-actions">
+          <button id="btnEditPersonFromDetails" class="icon-btn-small" title="تعديل الشخص">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button id="btnDeletePersonFromDetails" class="icon-btn-small btn-danger" title="حذف الشخص">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+          <button class="modal-close" data-close="modalPersonDetails">&times;</button>
+        </div>
+      </div>
+
+      <!-- كرت رصيد الشخص الصافي -->
+      <div class="person-balance-box">
+        <div class="bal-box-col">
+          <span>رصيد الدينار (IQD)</span>
+          <strong id="detailsNetIqd">0 د.ع</strong>
+          <small id="detailsStatusIqd">-</small>
+        </div>
+        <div class="bal-divider"></div>
+        <div class="bal-box-col">
+          <span>رصيد الدولار (USD)</span>
+          <strong id="detailsNetUsd">$0</strong>
+          <small id="detailsStatusUsd">-</small>
+        </div>
+      </div>
+
+      <!-- زرين سريعين لتسجيل دين له أو عليه -->
+      <div class="quick-record-buttons">
+        <button id="btnQuickDebtForMe" class="btn btn-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          سجل دين لي (مستحق)
+        </button>
+        <button id="btnQuickDebtOnMe" class="btn btn-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+          سجل دين علي (مطلوب)
+        </button>
+      </div>
+
+      <!-- قائمة الحركات المالية للشخص -->
+      <div class="transactions-header">
+        <h4>سجل الحركات المالية (<span id="detailsTxCount">0</span>)</h4>
+      </div>
+      <div id="detailsTxList" class="transactions-list"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: إضافة / تعديل حركة مالية -->
+  <!-- ============================================================== -->
+  <div id="modalTransaction" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h3 id="modalTxTitle">إضافة حركة مالية</h3>
+        <button class="modal-close" data-close="modalTransaction">&times;</button>
+      </div>
+      <form id="formTransaction">
+        <input type="hidden" id="txPersonId">
+        <input type="hidden" id="txEditId">
+
+        <!-- اختيار نوع الدين -->
+        <div class="form-group">
+          <label>نوع الحركة</label>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn active-green" id="btnTypeForMe" data-type="for_me">
+              دين لي (مستحق)
+            </button>
+            <button type="button" class="seg-btn" id="btnTypeOnMe" data-type="on_me">
+              دين علي (مطلوب)
+            </button>
+          </div>
+        </div>
+
+        <!-- اختيار العملة -->
+        <div class="form-group">
+          <label>العملة</label>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn active-currency" id="btnCurrIqd" data-curr="IQD">
+              دينار عراقي (IQD)
+            </button>
+            <button type="button" class="seg-btn" id="btnCurrUsd" data-curr="USD">
+              دولار أمريكي (USD)
+            </button>
+          </div>
+        </div>
+
+        <!-- المبلغ -->
+        <div class="form-group">
+          <label for="txAmountInput">المبلغ *</label>
+          <input type="number" id="txAmountInput" step="any" placeholder="0" required class="amount-large-input">
+        </div>
+
+        <!-- التاريخ -->
+        <div class="form-group">
+          <label for="txDateInput">التاريخ</label>
+          <input type="date" id="txDateInput" required>
+        </div>
+
+        <!-- تفاصيل الحركة -->
+        <div class="form-group">
+          <label for="txNotesInput">ملاحظة / سبب الدين</label>
+          <input type="text" id="txNotesInput" placeholder="مثال: سلفة، متبقي فاتورة...">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" data-close="modalTransaction">إلغاء</button>
+          <button type="submit" class="btn btn-primary">حفظ الحركة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: الإعدادات والنسخ الاحتياطي -->
+  <!-- ============================================================== -->
+  <div id="modalSettings" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h3>الإعدادات والنسخ الاحتياطي</h3>
+        <button class="modal-close" data-close="modalSettings">&times;</button>
+      </div>
+
+      <div class="settings-content">
+        <!-- سعر الصرف -->
+        <div class="setting-block">
+          <h4>سعر صرف الدولار (يدوي بدون إنترنت)</h4>
+          <p class="setting-desc">يُستخدم لاحتساب الإجمالي التقديري الموحد بالدينار.</p>
+          <div class="rate-input-row">
+            <span>1 دولار =</span>
+            <input type="number" id="settingRateInput" min="1" step="10" value="1530">
+            <span>دينار</span>
+            <button id="btnSaveRate" class="btn btn-primary btn-sm">تحديث</button>
+          </div>
+        </div>
+
+        <hr class="settings-divider">
+
+        <!-- النسخ الاحتياطي -->
+        <div class="setting-block">
+          <h4>النسخ الاحتياطي والاسترجاع (JSON)</h4>
+          <p class="setting-desc">حفظ بياناتك بأمان ونقلها لأي جهاز آيفون أو أندرويد آخر في ثوانٍ.</p>
+          <div class="backup-actions-row">
+            <button id="btnExportBackup" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              تصدير نسخة احتياطية
+            </button>
+            <label class="btn btn-secondary file-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              استرجاع من ملف
+              <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <hr class="settings-divider">
+
+        <!-- إجراءات إضافية -->
+        <div class="setting-block">
+          <h4>بيانات التطبيق</h4>
+          <div class="danger-actions-row">
+            <button id="btnSeedDemoData" class="btn btn-secondary btn-sm">إضافة بيانات تجريبية</button>
+            <button id="btnClearAllData" class="btn btn-danger btn-sm">مسح وتصفير كافة البيانات</button>
+          </div>
+        </div>
+
+        <div class="app-credit">
+          <strong>تطبيق زيد اياد للديون</strong>
+          <span>الإصدار 1.0.0 • يعمل محلياً 100% بدون أي خوادم</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: التقارير والرسوم البيانية -->
+  <!-- ============================================================== -->
+  <div id="modalReports" class="modal-overlay">
+    <div class="modal-card modal-large">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h3>التقارير والإحصائيات</h3>
+        <button class="modal-close" data-close="modalReports">&times;</button>
+      </div>
+
+      <div class="reports-content">
+        <!-- كروت الإحصائيات -->
+        <div class="report-stats-grid">
+          <div class="r-stat-card">
+            <span class="r-num" id="rTotalPersons">0</span>
+            <span class="r-label">إجمالي الأشخاص</span>
+          </div>
+          <div class="r-stat-card">
+            <span class="r-num r-num-active" id="rActivePersons">0</span>
+            <span class="r-label">حسابات نشطة</span>
+          </div>
+          <div class="r-stat-card">
+            <span class="r-num r-num-settled" id="rSettledPersons">0</span>
+            <span class="r-label">خالص الذمة</span>
+          </div>
+        </div>
+
+        <!-- رسم بياني دينار -->
+        <div class="chart-card">
+          <h4>توزيع الديون بالدينار العراقي (IQD)</h4>
+          <div class="chart-wrapper">
+            <canvas id="canvasIqdChart" width="220" height="220"></canvas>
+            <div id="chartIqdLegend" class="chart-legend"></div>
+          </div>
+        </div>
+
+        <!-- رسم بياني دولار -->
+        <div class="chart-card">
+          <h4>توزيع الديون بالدولار الأمريكي (USD)</h4>
+          <div class="chart-wrapper">
+            <canvas id="canvasUsdChart" width="220" height="220"></canvas>
+            <div id="chartUsdLegend" class="chart-legend"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- حاوية التنبيهات المنبثقة السريعة Toast -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // تسجيل الـ Service Worker ليعمل التطبيق أوفلاين بالكامل
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

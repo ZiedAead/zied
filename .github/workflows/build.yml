@@ -35,16 +35,51 @@ jobs:
           plutil -replace UIFileSharingEnabled -bool true ios/Runner/Info.plist || true
           plutil -replace LSSupportsOpeningDocumentsInPlace -bool true ios/Runner/Info.plist || true
 
-      - name: Install dependencies & CocoaPods
+      - name: Configure iOS Podfile with iOS 13.0 and No Code Signing
+        run: |
+          cat << 'EOF' > ios/Podfile
+          platform :ios, '13.0'
+          ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+          project 'Runner', { 'Debug' => :debug, 'Profile' => :release, 'Release' => :release }
+          def flutter_root
+            generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+            unless File.exist?(generated_xcode_build_settings_path)
+              raise "#{generated_xcode_build_settings_path} must exist"
+            end
+            File.foreach(generated_xcode_build_settings_path) do |line|
+              matches = line.match(/FLUTTER_ROOT\=(.*)/)
+              return matches[1].strip if matches
+            end
+            raise "FLUTTER_ROOT not found"
+          end
+          require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+          flutter_ios_podfile_setup
+          target 'Runner' do
+            use_frameworks!
+            use_modular_headers!
+            flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+          end
+          post_install do |installer|
+            installer.pods_project.targets.each do |target|
+              flutter_additional_ios_build_settings(target)
+              target.build_configurations.each do |config|
+                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+                config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+                config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+                config.build_settings['CODE_SIGN_IDENTITY'] = '-'
+                config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = '-'
+              end
+            end
+          end
+          EOF
+
+      - name: Install dependencies
         run: |
           flutter pub get
-          cd ios
-          pod install || true
-          cd ..
 
       - name: Build iOS Application Bundle
         run: |
-          flutter build ios --release --no-codesign --verbose > build_ios.log 2>&1 || (tail -n 150 build_ios.log && exit 1)
+          flutter build ios --release --no-codesign
 
       - name: Package into IPA
         run: |
@@ -89,13 +124,18 @@ jobs:
           cp -r zied_debts/android .
           rm -rf zied_debts
 
+      - name: Configure Android SDK versions
+        run: |
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle || true
+          sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle || true
+
       - name: Install dependencies
         run: |
           flutter pub get
 
       - name: Build APK Release
         run: |
-          flutter build apk --release --verbose > build_android.log 2>&1 || (tail -n 150 build_android.log && exit 1)
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

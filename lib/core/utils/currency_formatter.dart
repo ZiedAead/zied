@@ -3,7 +3,6 @@ import '../constants/app_strings.dart';
 
 class CurrencyFormatter {
   static final NumberFormat _iqdFormat = NumberFormat("#,##0", "en_US");
-  static final NumberFormat _usdFormat = NumberFormat("#,##0.00", "en_US");
   static final NumberFormat _usdCleanFormat = NumberFormat("#,##0.##", "en_US");
 
   /// تنسيق المبلغ مع رمز العملة

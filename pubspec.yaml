@@ -23,26 +23,18 @@ dependencies:
   shared_preferences: ^2.2.3
 
   # Backup, Share & File Management
-  share_plus: ^9.0.0
-  file_picker: ^8.0.0
+  share_plus: any
+  file_picker: any
 
   # UI, Fonts & 3D Animations
-  google_fonts: ^6.2.1
-  flutter_animate: ^4.5.0
-  fl_chart: ^0.68.0
-  intl: ^0.19.0
+  google_fonts: any
+  flutter_animate: any
+  fl_chart: any
+  intl: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
-
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/icon/app_icon.png"
-  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

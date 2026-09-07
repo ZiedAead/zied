@@ -28,9 +28,7 @@ jobs:
       - name: Generate Clean Native Xcode Project
         run: |
           rm -rf ios
-          flutter create --org com.zied --platforms ios zied_debts
-          cp -r zied_debts/ios .
-          rm -rf zied_debts
+          flutter create --project-name zied_debts --org com.zied --platforms ios .
           plutil -replace CFBundleDisplayName -string "زيد اياد للديون" ios/Runner/Info.plist || true
           plutil -replace UIFileSharingEnabled -bool true ios/Runner/Info.plist || true
           plutil -replace LSSupportsOpeningDocumentsInPlace -bool true ios/Runner/Info.plist || true
@@ -42,7 +40,7 @@ jobs:
           ENV['COCOAPODS_DISABLE_STATS'] = 'true'
           project 'Runner', { 'Debug' => :debug, 'Profile' => :release, 'Release' => :release }
           def flutter_root
-            generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+            generated_xcode_build_settings_path = File.expand_path(File.join('..', '..', 'Flutter', 'Generated.xcconfig'), __FILE__)
             unless File.exist?(generated_xcode_build_settings_path)
               raise "#{generated_xcode_build_settings_path} must exist"
             end
@@ -73,13 +71,36 @@ jobs:
           end
           EOF
 
+      - name: Disable Xcode Code Signing
+        run: |
+          echo "CODE_SIGNING_ALLOWED=NO" >> ios/Flutter/Release.xcconfig
+          echo "CODE_SIGNING_REQUIRED=NO" >> ios/Flutter/Release.xcconfig
+          echo "CODE_SIGN_IDENTITY=" >> ios/Flutter/Release.xcconfig
+          echo "EXPANDED_CODE_SIGN_IDENTITY=" >> ios/Flutter/Release.xcconfig
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj || true
+          sed -i '' 's/DEVELOPMENT_TEAM = [A-Za-z0-9]*;/DEVELOPMENT_TEAM = "";/g' ios/Runner.xcodeproj/project.pbxproj || true
+          sed -i '' 's/CODE_SIGN_IDENTITY = "iPhone Developer";/CODE_SIGN_IDENTITY = "";/g' ios/Runner.xcodeproj/project.pbxproj || true
+
       - name: Install dependencies
         run: |
           flutter pub get
 
       - name: Build iOS Application Bundle
         run: |
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign 2>&1 | tee ios_build.log
+
+      - name: Show iOS error summary on failure
+        if: failure()
+        run: |
+          echo "=== IOS BUILD ERROR SUMMARY ==="
+          grep -E -C 2 -i "(error:|failed|fatal:)" ios_build.log | head -n 80 || tail -n 80 ios_build.log
+
+      - name: Upload iOS Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Build-Log
+          path: ios_build.log
 
       - name: Package into IPA
         run: |
@@ -120,14 +141,7 @@ jobs:
       - name: Generate Clean Native Android Project
         run: |
           rm -rf android
-          flutter create --org com.zied --platforms android zied_debts
-          cp -r zied_debts/android .
-          rm -rf zied_debts
-
-      - name: Configure Android SDK versions
-        run: |
-          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle || true
-          sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle || true
+          flutter create --project-name zied_debts --org com.zied --platforms android .
 
       - name: Install dependencies
         run: |
@@ -135,7 +149,20 @@ jobs:
 
       - name: Build APK Release
         run: |
-          flutter build apk --release
+          flutter build apk --release 2>&1 | tee android_build.log
+
+      - name: Show Android error summary on failure
+        if: failure()
+        run: |
+          echo "=== ANDROID BUILD ERROR SUMMARY ==="
+          grep -E -C 2 -i "(error:|failed|fatal:)" android_build.log | head -n 80 || tail -n 80 android_build.log
+
+      - name: Upload Android Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-Build-Log
+          path: android_build.log
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

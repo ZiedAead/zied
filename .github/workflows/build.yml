@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   # ==========================================
   # تجميع ملف iOS (IPA) عبر خوادم Mac السحابية
@@ -33,48 +36,18 @@ jobs:
           plutil -replace UIFileSharingEnabled -bool true ios/Runner/Info.plist || true
           plutil -replace LSSupportsOpeningDocumentsInPlace -bool true ios/Runner/Info.plist || true
 
-      - name: Configure iOS Podfile with iOS 13.0 and No Code Signing
+      - name: Prepare Flutter iOS Config and Default Podfile
         run: |
-          cat << 'EOF' > ios/Podfile
-          platform :ios, '13.0'
-          ENV['COCOAPODS_DISABLE_STATS'] = 'true'
-          project 'Runner', { 'Debug' => :debug, 'Profile' => :release, 'Release' => :release }
-          def flutter_root
-            path1 = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-            path2 = File.expand_path(File.join('..', '..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-            generated_xcode_build_settings_path = File.exist?(path1) ? path1 : path2
-            unless File.exist?(generated_xcode_build_settings_path)
-              raise "#{generated_xcode_build_settings_path} must exist"
-            end
-            File.foreach(generated_xcode_build_settings_path) do |line|
-              matches = line.match(/FLUTTER_ROOT\=(.*)/)
-              return matches[1].strip if matches
-            end
-            raise "FLUTTER_ROOT not found"
-          end
-          require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
-          flutter_ios_podfile_setup
-          target 'Runner' do
-            use_frameworks!
-            use_modular_headers!
-            flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-          end
-          post_install do |installer|
-            installer.pods_project.targets.each do |target|
-              flutter_additional_ios_build_settings(target)
-              target.build_configurations.each do |config|
-                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-                config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-                config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
-                config.build_settings['CODE_SIGN_IDENTITY'] = '-'
-                config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = '-'
-              end
-            end
-          end
-          EOF
+          flutter pub get
+          flutter build ios --config-only --no-codesign || true
 
-      - name: Disable Xcode Code Signing
+      - name: Configure Podfile Platform and Disable Signing
         run: |
+          if [ -f ios/Podfile ]; then
+            sed -i '' "s/# platform :ios, '12.0'/platform :ios, '13.0'/g" ios/Podfile || true
+            sed -i '' "s/platform :ios, '12.0'/platform :ios, '13.0'/g" ios/Podfile || true
+            sed -i '' "s/flutter_additional_ios_build_settings(target)/flutter_additional_ios_build_settings(target); target.build_configurations.each { |c| c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'; c.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'; c.build_settings['CODE_SIGN_IDENTITY'] = '-' }/g" ios/Podfile || true
+          fi
           echo "CODE_SIGNING_ALLOWED=NO" >> ios/Flutter/Release.xcconfig
           echo "CODE_SIGNING_REQUIRED=NO" >> ios/Flutter/Release.xcconfig
           echo "CODE_SIGN_IDENTITY=" >> ios/Flutter/Release.xcconfig
@@ -82,10 +55,6 @@ jobs:
           sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj || true
           sed -i '' 's/DEVELOPMENT_TEAM = [A-Za-z0-9]*;/DEVELOPMENT_TEAM = "";/g' ios/Runner.xcodeproj/project.pbxproj || true
           sed -i '' 's/CODE_SIGN_IDENTITY = "iPhone Developer";/CODE_SIGN_IDENTITY = "";/g' ios/Runner.xcodeproj/project.pbxproj || true
-
-      - name: Install dependencies
-        run: |
-          flutter pub get
 
       - name: Build iOS Application Bundle
         run: |
@@ -97,8 +66,18 @@ jobs:
         run: |
           echo "=== SEARCHING FOR RUNNER.APP ==="
           find build -name "Runner.app" || true
-          echo "=== BUILD LOG SUMMARY (LAST 60 LINES) ==="
-          tail -n 60 ios_build.log || true
+          echo "=== BUILD LOG SUMMARY (LAST 80 LINES) ==="
+          tail -n 80 ios_build.log || true
+
+      - name: Push build log to repo branch
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git checkout -B build-logs
+          git add -f ios_build.log || true
+          git commit -m "Upload ios_build.log" || true
+          git push origin build-logs --force || true
 
       - name: Upload iOS Build Log
         if: always()

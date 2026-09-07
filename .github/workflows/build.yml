@@ -106,6 +106,16 @@ jobs:
           name: ZiedAeadDebts-iOS-IPA
           path: ZiedAeadDebts.ipa
 
+      - name: Create Direct GitHub Release (iOS)
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: "v1.0.0"
+          name: "زيد اياد للديون - v1.0.0"
+          body: "تطبيق زيد اياد للديون - ملفات التحميل المباشر للآيفون والأندرويد"
+          files: |
+            ZiedAeadDebts.ipa
+
   # ==========================================
   # تجميع ملف Android (APK)
   # ==========================================
@@ -160,3 +170,13 @@ jobs:
         with:
           name: ZiedAeadDebts-Android-APK
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create Direct GitHub Release (Android)
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: "v1.0.0"
+          name: "زيد اياد للديون - v1.0.0"
+          body: "تطبيق زيد اياد للديون - ملفات التحميل المباشر للآيفون والأندرويد"
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk

@@ -152,6 +152,17 @@ jobs:
         run: |
           flutter build apk --release 2>&1 | tee android_build.log
 
+      - name: Locate and Prepare APK
+        run: |
+          APK_PATH=$(find build -name "*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "ERROR: APK not found in build directory!"
+            find build -maxdepth 5 || true
+            exit 1
+          fi
+          echo "Found APK at: $APK_PATH"
+          cp "$APK_PATH" ZiedAeadDebts.apk
+
       - name: Show Android error summary on failure
         if: failure()
         run: |
@@ -169,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ZiedAeadDebts-Android-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: ZiedAeadDebts.apk
 
       - name: Create Direct GitHub Release (Android)
         uses: softprops/action-gh-release@v2
@@ -179,4 +190,4 @@ jobs:
           name: "زيد اياد للديون - v1.0.0"
           body: "تطبيق زيد اياد للديون - ملفات التحميل المباشر للآيفون والأندرويد"
           files: |
-            build/app/outputs/flutter-apk/app-release.apk
+            ZiedAeadDebts.apk

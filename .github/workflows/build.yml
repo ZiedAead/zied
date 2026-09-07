@@ -22,13 +22,18 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.x'
           channel: 'stable'
           cache: true
 
-      - name: Generate Missing Native Xcode Project Files
+      - name: Recreate Clean Native Xcode Project
         run: |
+          mkdir -p /tmp/backup_ios
+          cp ios/Runner/Info.plist /tmp/backup_ios/Info.plist || true
+          rm -rf ios
           flutter create . --org com.zied --project-name zied_debts --platforms ios
+          if [ -f /tmp/backup_ios/Info.plist ]; then
+            cp /tmp/backup_ios/Info.plist ios/Runner/Info.plist
+          fi
 
       - name: Install dependencies
         run: flutter pub get
@@ -70,13 +75,18 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.x'
           channel: 'stable'
           cache: true
 
-      - name: Generate Missing Native Android Project Files
+      - name: Recreate Clean Native Android Project
         run: |
+          mkdir -p /tmp/backup_android
+          cp android/app/src/main/AndroidManifest.xml /tmp/backup_android/AndroidManifest.xml || true
+          rm -rf android
           flutter create . --org com.zied --project-name zied_debts --platforms android
+          if [ -f /tmp/backup_android/AndroidManifest.xml ]; then
+            cp /tmp/backup_android/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
+          fi
 
       - name: Install dependencies
         run: flutter pub get

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/utils/currency_formatter.dart';
+import '../../models/person_model.dart';
 import '../../providers/debt_provider.dart';
 import '../../widgets/custom_3d_card.dart';
 
@@ -263,7 +264,7 @@ class ReportsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopPersonsSection(List dynamicPersons, bool isDark) {
+  Widget _buildTopPersonsSection(List<Person> dynamicPersons, bool isDark) {
     if (dynamicPersons.isEmpty) return const SizedBox();
 
     return Custom3dCard(

@@ -150,7 +150,18 @@ jobs:
 
       - name: Build APK Release
         run: |
+          set -o pipefail
           flutter build apk --release 2>&1 | tee android_build.log
+
+      - name: Push Android log to repo branch
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git checkout -B android-logs
+          git add -f android_build.log || true
+          git commit -m "Upload android_build.log" || true
+          git push origin android-logs --force || true
 
       - name: Locate and Prepare APK
         run: |

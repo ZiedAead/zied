@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../models/person_model.dart';
 import '../../models/transaction_model.dart';
 import '../../models/backup_data_model.dart';
@@ -21,20 +19,8 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String filePath) async {
-    // دعم تشغيل SQLite على بيئة Windows/Desktop في حال الاختبار المكتبي
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-    }
-
-    String path;
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-      final docDir = await getApplicationDocumentsDirectory();
-      path = join(docDir.path, filePath);
-    } else {
-      final dbPath = await getDatabasesPath();
-      path = join(dbPath, filePath);
-    }
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
 
     return await openDatabase(
       path,

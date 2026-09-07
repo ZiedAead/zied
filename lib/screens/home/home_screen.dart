@@ -45,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final debtProv = context.watch<DebtProvider>();
-    final settingsProv = context.watch<SettingsProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final filteredPersons = _filterPersons(debtProv.persons);

@@ -35,13 +35,16 @@ jobs:
           plutil -replace UIFileSharingEnabled -bool true ios/Runner/Info.plist || true
           plutil -replace LSSupportsOpeningDocumentsInPlace -bool true ios/Runner/Info.plist || true
 
-      - name: Install dependencies
+      - name: Install dependencies & CocoaPods
         run: |
           flutter pub get
+          cd ios
+          pod install || true
+          cd ..
 
       - name: Build iOS Application Bundle
         run: |
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --verbose > build_ios.log 2>&1 || (tail -n 150 build_ios.log && exit 1)
 
       - name: Package into IPA
         run: |
@@ -91,7 +94,8 @@ jobs:
           flutter pub get
 
       - name: Build APK Release
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release --verbose > build_android.log 2>&1 || (tail -n 150 build_android.log && exit 1)
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

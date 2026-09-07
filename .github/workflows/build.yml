@@ -25,18 +25,20 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Recreate Clean Native Xcode Project
+      - name: Generate Clean Native Xcode Project
         run: |
-          mkdir -p /tmp/backup_ios
-          cp ios/Runner/Info.plist /tmp/backup_ios/Info.plist || true
           rm -rf ios
-          flutter create . --org com.zied --project-name zied_debts --platforms ios
-          if [ -f /tmp/backup_ios/Info.plist ]; then
-            cp /tmp/backup_ios/Info.plist ios/Runner/Info.plist
-          fi
+          flutter create --org com.zied --platforms ios zied_debts
+          cp -r zied_debts/ios .
+          rm -rf zied_debts
+          plutil -replace CFBundleDisplayName -string "زيد اياد للديون" ios/Runner/Info.plist || true
+          plutil -replace UIFileSharingEnabled -bool true ios/Runner/Info.plist || true
+          plutil -replace LSSupportsOpeningDocumentsInPlace -bool true ios/Runner/Info.plist || true
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons || true
 
       - name: Build iOS Application Bundle
         run: |
@@ -78,18 +80,17 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Recreate Clean Native Android Project
+      - name: Generate Clean Native Android Project
         run: |
-          mkdir -p /tmp/backup_android
-          cp android/app/src/main/AndroidManifest.xml /tmp/backup_android/AndroidManifest.xml || true
           rm -rf android
-          flutter create . --org com.zied --project-name zied_debts --platforms android
-          if [ -f /tmp/backup_android/AndroidManifest.xml ]; then
-            cp /tmp/backup_android/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
-          fi
+          flutter create --org com.zied --platforms android zied_debts
+          cp -r zied_debts/android .
+          rm -rf zied_debts
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons || true
 
       - name: Build APK Release
         run: flutter build apk --release

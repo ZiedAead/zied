@@ -23,7 +23,7 @@ dependencies:
 
   # Backup, Share & File Management
   share_plus: any
-  file_picker: any
+  file_picker: 8.1.4
 
   # UI, Fonts & 3D Animations
   google_fonts: any
